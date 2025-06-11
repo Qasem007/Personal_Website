@@ -1,33 +1,44 @@
 
+
+import { useState} from 'react';
 import './App.css';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Marquee from './components/Marquee';
-import Projects from './components/Projects';
-import  About  from './components/About';
-import  Work  from './components/Work';
-import Contact from './components/Contact';
-
-
+import { Header } from './components/Header';
+import { Product } from './components/Product';
+import { Footer } from './components/Footer';
 
 function App() {
+  
 
+
+  const [cartItems ,setCartItems]=useState([]);
+
+  const removeFromCart = (id) => {
+    setCartItems((prevItems) => prevItems.map((item) => item.id !== id ? 
+    {...item, quantity:item.quantity -1}:item).filter((item)=> item.quantity >0));
+  };
+
+
+  const addToCArt=(product)=>{
+    setCartItems((prevItems)=>{
+      const existingItem=prevItems.find((item)=>item.id==product.id);
+      if(existingItem){
+        return prevItems.map((item)=>
+        item.id===product.id ? {...item,quantity: item.quantity +1 }: item);
+      }
+      return [...prevItems,{...product ,quantity:1}];
+    });
+    setCartItems([...cartItems, product]);
+  };
+
+  
 
   
   return (
-    <main
-      className="font-light text-white antialiased
-   selection:bg-lime-300 selection:text-black"
-    >
-      <Navbar />
-      <Hero />
-      <Marquee />
-      <Projects />
-      <About/>
-      <Work/>
-      <Contact/>
-
-    </main>
+   <div >
+    <Header cartItems={cartItems} onRemove={removeFromCart}/>
+    <Product onAddToCart={addToCArt}/>
+    <Footer/>
+   </div>
   );
 }
 
